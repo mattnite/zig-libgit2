@@ -1,6 +1,6 @@
-# libcurl build package
+# ligit2 build package
 
-[![ci](https://github.com/mattnite/zig-libcurl/actions/workflows/ci.yml/badge.svg)](https://github.com/mattnite/zig-libcurl/actions/workflows/ci.yml)
+[![ci](https://github.com/mattnite/zig-libgit2/actions/workflows/ci.yml/badge.svg)](https://github.com/mattnite/zig-libgit2/actions/workflows/ci.yml)
 
 ## Like this project?
 
@@ -8,37 +8,27 @@ If you like this project or other works of mine, please consider [donating to or
 
 ## How to use
 
-This repo contains code for your `build.zig` that can statically compile libcurl, as well as some idiomatic Zig bindings for libcurl that you can use in your application. In either case below you will be able to include libcurls header with:
+This repo contains code for your `build.zig` that can statically compile libgit2, you will be able to include libgit2's header with:
 
 ```zig
 const c = @cImport({
-    @cInclude("curl/curl.h");
+    @cInclude("git2.h");
 });
 ```
 
-### Link and add bindings to your application
+### Link to your application
 
-In order to statically link libcurl into your application and access the bindings with a configurable import string:
+In order to statically link libgit2 into your application:
 
 ```zig
-const libcurl = @import("path/to/libcurl.zig");
+const libgit2 = @import("path/to/libgit2.zig");
 
 pub fn build(b: *std.build.Builder) void {
     // ...
 
-    const lib = libcurl.create(b, target, mode);
+    const lib = libgit2.create(b, target, mode);
 
     const exe = b.addExecutable("my-program", "src/main.zig");
-    lib.link(exe, .{ .import_name = "curl" });
+    lib.link(exe);
 }
-```
-
-Now code that is part of the `my-program` executable can import the libcurl bindings with `@import("curl")`.
-
-### Only link to your application
-
-In order to just link to the application, all you need to do is omit the `.import_name = "curl"` argument to libcurl's link options:
-
-```zig
-    lib.link(exe, .{});
 ```
