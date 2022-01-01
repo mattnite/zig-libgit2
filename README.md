@@ -1,4 +1,4 @@
-# ligit2 build package
+# libgit2 build package
 
 [![ci](https://github.com/mattnite/zig-libgit2/actions/workflows/ci.yml/badge.svg)](https://github.com/mattnite/zig-libgit2/actions/workflows/ci.yml)
 
