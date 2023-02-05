@@ -11,7 +11,7 @@ pub const Library = struct {
     step: *std.build.LibExeObjStep,
 
     pub fn link(self: Library, other: *std.build.LibExeObjStep) void {
-        other.addIncludeDir(include_dir);
+        other.addIncludePath(include_dir);
         other.linkLibrary(self.step);
     }
 };
@@ -19,11 +19,13 @@ pub const Library = struct {
 pub fn create(
     b: *std.build.Builder,
     target: std.zig.CrossTarget,
-    mode: std.builtin.Mode,
+    optimize: std.builtin.OptimizeMode,
 ) !Library {
-    const ret = b.addStaticLibrary("git2", null);
-    ret.setTarget(target);
-    ret.setBuildMode(mode);
+    const ret = b.addStaticLibrary(.{
+        .name = "git2",
+        .target = target,
+        .optimize = optimize,
+    });
 
     var flags = std.ArrayList([]const u8).init(b.allocator);
     defer flags.deinit();
@@ -79,10 +81,10 @@ pub fn create(
         "-DMAX_NAME_COUNT=10000",
     });
 
-    ret.addIncludeDir(include_dir);
-    ret.addIncludeDir(root_path ++ "libgit2/src");
-    ret.addIncludeDir(root_path ++ "libgit2/deps/pcre");
-    ret.addIncludeDir(root_path ++ "libgit2/deps/http-parser");
+    ret.addIncludePath(include_dir);
+    ret.addIncludePath(root_path ++ "libgit2/src");
+    ret.addIncludePath(root_path ++ "libgit2/deps/pcre");
+    ret.addIncludePath(root_path ++ "libgit2/deps/http-parser");
     ret.linkLibC();
 
     return Library{ .step = ret };
