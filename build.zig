@@ -1,19 +1,22 @@
 const std = @import("std");
+
+const build_pkgs = @import("deps.zig").build_pkgs;
+
 const libgit2 = @import("libgit2.zig");
-const mbedtls = @import("mbedtls");
-const libssh2 = @import("libssh2");
-const zlib = @import("zlib");
+const mbedtls = build_pkgs.mbedtls;
+const libssh2 = build_pkgs.libssh2;
+const zlib = build_pkgs.zlib;
 
 pub fn build(b: *std.build.Builder) !void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
+    const optimize = b.standardOptimizeOption(.{});
 
-    const z = zlib.create(b, target, mode);
-    const tls = mbedtls.create(b, target, mode);
-    const ssh2 = libssh2.create(b, target, mode);
+    const z = zlib.create(b, target, optimize);
+    const tls = mbedtls.create(b, target, optimize);
+    const ssh2 = libssh2.create(b, target, optimize);
     tls.link(ssh2.step);
 
-    const git2 = try libgit2.create(b, target, mode);
+    const git2 = try libgit2.create(b, target, optimize);
     ssh2.link(git2.step);
     tls.link(git2.step);
     z.link(git2.step, .{});
